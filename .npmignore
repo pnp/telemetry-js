@@ -1,0 +1,15 @@
+# Files
+.git*
+.editorconfig
+tsconfig.json
+yarn.lock
+*.tgz
+.DS_Store
+
+# Folders
+.vscode
+node_modules
+src
+scripts
+assets
+.circleci

@@ -1,0 +1,6 @@
+# Files
+*.tgz
+.DS_Store
+
+# Folders
+node_modules

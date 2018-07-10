@@ -1,0 +1,96 @@
+defaults: &defaults
+  working_directory: ~/telemetry
+  docker:
+    - image: circleci/node:8.11.1
+
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/telemetry
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Restore dependencies
+          command: npm i
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: build
+          command: npm run build
+      - persist_to_workspace:
+          root: .
+          paths: .
+  publish_next:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/telemetry
+      - run:
+          name: Write .npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run:
+          name: Stamp beta to package version
+          command: node scripts/update-package-version.js $CIRCLE_SHA1
+      - run:
+          name: Publish @next
+          command: npm publish --tag next --access public
+  publish:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/telemetry
+      - run:
+          name: Write .npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run:
+          name: Publish
+          command: npm publish --access public
+
+workflows:
+  version: 2
+  check_pr:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: /^(dev|master)/
+      - test:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /^(dev|master)/
+  release_next:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: dev
+      - publish_next:
+          requires:
+            - test
+          filters:
+            branches:
+              only: dev
+  release:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+/
+            branches:
+              ignore: /.*/
+      - publish:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+/
+            branches:
+              ignore: /.*/
