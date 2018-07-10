@@ -8,10 +8,23 @@
   },
   "author": "Elio Struyf",
   "license": "MIT",
+  "homepage": "https://github.com/pnp/telemetry-js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pnp/telemetry-js"
+  },
+  "bugs": {
+    "url": "https://github.com/pnp/telemetry-js/issues"
+  },
   "devDependencies": {
     "typescript": "2.9.2"
   },
   "dependencies": {
     "whatwg-fetch": "2.0.4"
-  }
+  },
+  "keywords": [
+    "pnp",
+    "telemetry",
+    "insights"
+  ]
 }
