@@ -1,5 +1,5 @@
 defaults: &defaults
-  working_directory: ~/telemetry
+  working_directory: ~/telemetry-js
   docker:
     - image: circleci/node:8.11.1
 
@@ -10,7 +10,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/telemetry
+          at: ~/telemetry-js
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
@@ -30,7 +30,7 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/telemetry
+          at: ~/telemetry-js
       - run:
           name: Write .npmrc
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
@@ -44,7 +44,7 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/telemetry
+          at: ~/telemetry-js
       - run:
           name: Write .npmrc
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
