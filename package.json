@@ -1,6 +1,6 @@
 {
   "name": "@pnp/telemetry-js",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "PnP Telemetry dependency which is being used to track PnP client-side usage.",
   "main": "dist/index.js",
   "scripts": {
