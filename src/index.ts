@@ -10,6 +10,7 @@ const PNP_TELEMETRY_URL = "https://pnptelemetryproxy.azurewebsites.net/track";
 export default class PnPTelemetry {
   private events: any[] = [];
   private timeout: number = null;
+  private tracking: boolean = true;
 
   /**
    * Initialize the telemetry class and return the instance
@@ -22,14 +23,23 @@ export default class PnPTelemetry {
   }
 
   /**
+   * Opt out of tracking
+   */
+  public optOut() {
+    this.tracking = false;
+  }
+
+  /**
    * Track the event information
    *
    * @param name
    * @param props
    */
   public trackEvent(name: string, properties?: any) {
-    this.events.push({ name, properties});
-    this.debounceTracking();
+    if (this.tracking) {
+      this.events.push({ name, properties});
+      this.debounceTracking();
+    }
   }
 
   /**
