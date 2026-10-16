@@ -46,6 +46,7 @@ var PnPTelemetry = /** @class */ (function () {
     function PnPTelemetry() {
         this.events = [];
         this.timeout = null;
+        this.tracking = true;
     }
     /**
      * Initialize the telemetry class and return the instance
@@ -57,14 +58,22 @@ var PnPTelemetry = /** @class */ (function () {
         return window.pnpTelemetry;
     };
     /**
+     * Opt out of tracking
+     */
+    PnPTelemetry.prototype.optOut = function () {
+        this.tracking = false;
+    };
+    /**
      * Track the event information
      *
      * @param name
      * @param props
      */
     PnPTelemetry.prototype.trackEvent = function (name, properties) {
-        this.events.push({ name: name, properties: properties });
-        this.debounceTracking();
+        if (this.tracking) {
+            this.events.push({ name: name, properties: properties });
+            this.debounceTracking();
+        }
     };
     /**
      * Delay event tracking
@@ -79,20 +88,27 @@ var PnPTelemetry = /** @class */ (function () {
                 }
                 // Set a new timeout
                 this.timeout = setTimeout(function () { return __awaiter(_this, void 0, void 0, function () {
+                    var _error_1;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, fetch(PNP_TELEMETRY_URL, {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify(this.events)
-                                })];
+                            case 0:
+                                _a.trys.push([0, 2, , 3]);
+                                return [4 /*yield*/, fetch(PNP_TELEMETRY_URL, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify(this.events)
+                                    })];
                             case 1:
                                 _a.sent();
-                                // Reset the events
+                                // Reset the events only after they were sent successfully
                                 this.events = [];
-                                return [2 /*return*/];
+                                return [3 /*break*/, 3];
+                            case 2:
+                                _error_1 = _a.sent();
+                                return [3 /*break*/, 3];
+                            case 3: return [2 /*return*/];
                         }
                     });
                 }); }, 1000);
@@ -103,4 +119,3 @@ var PnPTelemetry = /** @class */ (function () {
     return PnPTelemetry;
 }());
 exports.default = PnPTelemetry;
-//# sourceMappingURL=index.js.map
