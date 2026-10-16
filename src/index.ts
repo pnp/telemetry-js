@@ -53,15 +53,19 @@ export default class PnPTelemetry {
 
     // Set a new timeout
     this.timeout = setTimeout(async () => {
-      await fetch(PNP_TELEMETRY_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(this.events)
-      });
-      // Reset the events
-      this.events = [];
+      try {
+        await fetch(PNP_TELEMETRY_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(this.events)
+        });
+        // Reset the events only after they were sent successfully
+        this.events = [];
+      } catch (_error) {
+        // Telemetry failures must not surface in the host application.
+      }
     }, 1000);
   }
 }
